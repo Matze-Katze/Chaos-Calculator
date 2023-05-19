@@ -75,12 +75,12 @@ public class RechnerApplikation extends JFrame implements ActionListener{
 						Thread.sleep(new Random().nextInt(chaosNumber+1)*500); //rndm sleep with increasing range 0.5-3.5sek
 					} catch (InterruptedException e1) {
 					}
-					switch(chaosNumber!=7?chaosNumber++:(int)(Math.random()*6.7+0.6)) {    // einmal 0-6 dann rndm mix wenig 0 und wenig 7  
+					switch(chaosNumber!=7?chaosNumber++:(int)(Math.random()*6.7+0.6)) {    // once 0-6 then rndm mix with few 0=nothing and few 7=close  
 						case 1:
-							drawMode(new Color(0, 0, 0, 0),null); //transparent foreground
+							drawMode(new Color(0, 0, 0, 0),null); 	//transparent foreground
 							break;
 						case 2:
-							int r=(int) (Math.random()*241);
+							int r=(int) (Math.random()*241);	//rndm background
 							int g=(int) (Math.random()*241);
 							int b=(int) (Math.random()*241);
 							drawMode(null,new Color(r,g,b));
@@ -89,7 +89,7 @@ public class RechnerApplikation extends JFrame implements ActionListener{
 							rndmizeComponentOrder(buttons);
 							break;
 						case 4:
-							drawMode(null,new Color(0, 0, 0, 0)); //transparent background
+							drawMode(null,new Color(0, 0, 0, 0)); 
 							break;
 						case 5:
 							int r2=(int) (Math.random()*241);
@@ -104,7 +104,7 @@ public class RechnerApplikation extends JFrame implements ActionListener{
 							close();
 							break;
 					}
-					});
+				});
 				chaos.start();
 			}
 		});
@@ -114,13 +114,10 @@ public class RechnerApplikation extends JFrame implements ActionListener{
 		inputY.setToolTipText("ich bin der Operand Y: eine reelle Zahl");
 		result.setToolTipText("ich bin das Ergebnis: die reellste Zahl");
 		result.setEditable(false);
-//		inputPane.setMinimumSize(new Dimension(350,90));
 		inputPane.setPreferredSize(new Dimension(380,120));
 		inputPane.setBorder(BorderFactory.createLineBorder(Color.black));
 		inputPane.setLayout(new GridLayout(3, 2,0,10));;
 		inputPanePane.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 10));
-//			momPane.setLayout(new BoxLayout(momPane, BoxLayout.Y_AXIS));
-//			if(this instanceof RechnerApplikation)
 			
 		inputPane.add(opX);
 		inputPane.add(inputX);
@@ -152,9 +149,6 @@ public class RechnerApplikation extends JFrame implements ActionListener{
 		buttons.setPreferredSize(new Dimension(380,80));
 		buttons.setBorder(BorderFactory.createLineBorder(Color.black));
 		buttons.setLayout(new GridLayout(2, 4,10,10));
-//		buttons.setLayout(new BoxLayout(buttons, BoxLayout.Y_AXIS));
-//		buttons.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 10));
-//		String[] buttonString= {"+"};
 		buttArray[0]=new JButton("+");
 		buttArray[1]=new JButton("*");
 		buttArray[2]=new JButton("-");
@@ -182,7 +176,6 @@ public class RechnerApplikation extends JFrame implements ActionListener{
 		getContentPane().add(settings);
 		getContentPane().add(buttonsPane);
 		getContentPane().add(Plussy);
-//			getContentPane().setLayout(new GridLayout(2, 2,20,20));
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		pack();
 		this.setVisible(true);
@@ -221,7 +214,7 @@ public class RechnerApplikation extends JFrame implements ActionListener{
 				if(red+blue+green>80*3)					//if not very dark
 					comp.setBackground(Color.WHITE);
 				else
-					comp.setBackground(new Color(150,150,150)); //kinda dark
+					comp.setBackground(new Color(150,150,150));
 			}
 			if(comp instanceof JPanel) {
 				drawMode(fore,back,((JPanel)comp).getComponents());
@@ -284,7 +277,7 @@ public class RechnerApplikation extends JFrame implements ActionListener{
 				break;
 		}
 	}
-	public String ganzeDouble(double x) {
+	public String ganzeDouble(double x) {		//get rid of decimal places equal 0
 		if((int)x==x)
 			return (int)(x)+"";
 		return x+"";
@@ -292,8 +285,7 @@ public class RechnerApplikation extends JFrame implements ActionListener{
 	public void close() {
 		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
-	private static <T> void shuffleArray(T[] array)
-	{
+	private static <T> void shuffleArray(T[] array){		//basic Fisher–Yates shuffle
 	    int index;
 		T temp;
 	    Random random = new Random();
