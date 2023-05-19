@@ -7,14 +7,22 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -48,9 +56,11 @@ public class RechnerApplikation extends JFrame implements ActionListener{
 	private ButtonGroup angleGroup=new ButtonGroup();
 	private JRadioButton radianButton = new JRadioButton("radian");
 	private JRadioButton degreeButton = new JRadioButton("degree");
-	public RechnerApplikation() {
+	public RechnerApplikation(){
 		setAlwaysOnTop(true);
-		setIconImage(Toolkit.getDefaultToolkit().getImage("icon.jpg"));
+		URL iconURL = getClass().getResource("/icon.jpg");
+		ImageIcon icon = new ImageIcon(iconURL);
+		setIconImage(icon.getImage());
 		this.setTitle("Calculator");		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
@@ -58,12 +68,10 @@ public class RechnerApplikation extends JFrame implements ActionListener{
 		angleGroup.add(radianButton);
 		radianButton.setSelected(radian);
 		darkMode.setSelected(dark);
-		darkMode.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				darkModeSwitch();
-			}
-		});
+		darkMode.addItemListener((ItemEvent e)->{
+			darkModeSwitch();
+		}
+		);
 		CHAOS.addMouseListener(new MouseAdapter() {   //kleine spielerei
 			@Override
 			public void mouseClicked(MouseEvent e) {
