@@ -52,7 +52,6 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 	private JRadioButton degreeButton = new JRadioButton("degree");
 	
 	private JButton[] buttonArray;
-	
 	private JButton clearButton;
 	
 	public ChaosCalculator(){
