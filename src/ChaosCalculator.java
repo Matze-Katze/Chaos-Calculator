@@ -26,7 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-
 public class ChaosCalculator extends JFrame implements ActionListener{
 	
 	public static void main(String[] args){
@@ -81,10 +80,10 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 						return;
 				chaosThread=new Thread(()->{
 					try {
-						Thread.sleep(new Random().nextInt(chaosNumber*500+1)); //rndm sleep with increasing range 0.5-3.5sek
+						Thread.sleep(new Random().nextInt(chaosNumber*500+1)); //rndm sleep with increasing range 0.5-4sek
 					} catch (InterruptedException e1) {
 					}
-					switch(chaosNumber!=7?chaosNumber++:(int)(Math.random()*6.7+0.6)) {    // once 0-6 then rndm mix with few 0=nothing and few 7=close  
+					switch(chaosNumber!=8?chaosNumber++:(int)(Math.random()*7.7+0.6)) {    // once 0-7 then rndm mix with few 0=nothing and few 8=close  
 						case 1:
 							drawFore(new Color(0, 0, 0, 0)); 	//transparent foreground
 							break;
@@ -104,6 +103,9 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 							rndmizeComponentOrder(getContentPane());
 							break;
 						case 7:
+							fakeClose(new Random().nextInt(5000));
+							break;
+						case 8:
 							close();
 							break;
 					}
@@ -179,7 +181,7 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		getContentPane().add(clearButton);
 		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		pack();
-		this.setVisible(true);
+		setVisible(true);
 		darkModeSwitch();
 	}
 
@@ -212,7 +214,7 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		drawMode(fore,back,getContentPane().getComponents());
 	}
 	
-	private static void drawMode(Color f,Color b,Component[] comps) {
+	public static void drawMode(Color f,Color b,Component[] comps) {
 		for(Component comp:comps) {
 			comp.setBackground(b);
 			comp.setForeground(f);
@@ -248,6 +250,15 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		return x+"";
 	}
 	
+	public void fakeClose(int a) {
+		setVisible(false);
+		try {
+			Thread.sleep(a);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		setVisible(true);
+	}
 	public void close() {
 		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
