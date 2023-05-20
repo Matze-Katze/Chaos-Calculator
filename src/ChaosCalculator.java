@@ -168,7 +168,6 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 			yField.setText("");
 			});
 		
-//		setContentPane(new BasicBackgroundPanel(img));
 		getContentPane().add(inputPanelPanel);
 		getContentPane().add(settingsPanel);
 		getContentPane().add(buttonsPanelPanel);
