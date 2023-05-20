@@ -26,7 +26,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+
 public class ChaosCalculator extends JFrame implements ActionListener{
+	
+	public static void main(String[] args){
+		 new ChaosCalculator();
+	}
 	
 	private boolean isDark=true,isRadian=true;
 	private int chaosNumber=0;
@@ -52,6 +57,7 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 	private JRadioButton degreeButton = new JRadioButton("degree");
 	
 	private JButton[] buttonArray;
+	
 	private JButton clearButton;
 	
 	public ChaosCalculator(){
