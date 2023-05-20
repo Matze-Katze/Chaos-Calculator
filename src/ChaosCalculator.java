@@ -27,6 +27,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 public class ChaosCalculator extends JFrame implements ActionListener{
+	
 	private boolean isDark=true,isRadian=true;
 	private int chaosNumber=0;
 	private Thread chaosThread;
