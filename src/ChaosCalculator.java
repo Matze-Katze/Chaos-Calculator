@@ -11,6 +11,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Iterator;
 import java.util.Random;
 
 import javax.swing.AbstractButton;
@@ -34,7 +36,7 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 	
 	private boolean isDark=true,isRadian=true;
 	private int chaosNumber=0;
-	private Thread chaosThread;
+	private Thread lastChaosThread;
 	
 	private JPanel inputPanelPanel=new JPanel();
 	private JPanel inputPanel=new JPanel();			
@@ -72,45 +74,42 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		radianButton.setSelected(isRadian);
 		darkModeCheck.setSelected(isDark);
 		darkModeCheck.addItemListener((ItemEvent e)->darkModeSwitch());  
-		chaosCheck.addMouseListener(new MouseAdapter() {   //chaos fun stuff
+		chaosCheck.addMouseListener(new MouseAdapter() {   								//chaos fun stuff
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(chaosThread!=null&&chaosThread.isAlive())   // 50/50 dont respond if chaosThread still alive
-					if(new Random().nextBoolean())
-						return;
-				chaosThread=new Thread(()->{
-					try {
-						Thread.sleep(new Random().nextInt(chaosNumber*500+1)); //rndm sleep with increasing range 0.5-4sek
-					} catch (InterruptedException e1) {
-					}
-					switch(chaosNumber!=8?chaosNumber++:(int)(Math.random()*7.7+0.6)) {    // once 0-7 then rndm mix with few 0=nothing and few 8=close  
-						case 1:
-							drawFore(new Color(0, 0, 0, 0)); 	//transparent foreground
-							break;
-						case 2:
-							drawBack(rndmColor());		//rndm background
-							break;
-						case 3:
-							rndmizeComponentOrder(buttonsPanel);
-							break;
-						case 4:
-							drawBack(new Color(0, 0, 0, 0)); 
-							break;
-						case 5:
-							drawFore(rndmColor());
-							break;
-						case 6:
-							rndmizeComponentOrder(getContentPane());
-							break;
-						case 7:
-							fakeClose(new Random().nextInt(5000));
-							break;
-						case 8:
-							close();
-							break;
-					}
-				});
-				chaosThread.start();
+				if(lastChaosThread!=null&&lastChaosThread.isAlive())   					//check chaosThread still alive
+					if(new Random().nextBoolean())										//50/50 return
+						return;	
+				try {
+					Thread.sleep(new Random().nextInt(chaosNumber*250+1)); 				//rndm sleep with increasing range starting 0.25 sek
+				} catch (InterruptedException e1) {
+				}
+				Thread[] chaosThreads= {
+							new Thread( ()->{} ),
+							new Thread( ()->{ drawFore(new Color(0, 0, 0, 0)); } ), 	//transparent foreground
+							new Thread( ()->{ drawBack(new Color(0, 0, 0, 0)); } ), 				
+							new Thread( ()->{ drawFore(rndmColor()); } ),				//rndm foreground
+							new Thread( ()->{ drawBack(rndmColor()); } ),
+							new Thread( ()->{ rndmizeComponentOrder(buttonsPanel); }),
+							new Thread( ()->{ rndmizeComponentOrder(inputPanel); }),
+							new Thread( ()->{ rndmizeComponentOrder(getContentPane()); }),
+							new Thread( ()->{ fakeClose(new Random().nextInt(4000)); }),
+							new Thread( ()->{ 
+								if(new Random().nextBoolean())
+									close();
+								else
+									fakeClose(10000);
+							}),
+						};
+				if(chaosNumber!=chaosThreads.length-1) {
+					lastChaosThread=chaosThreads[chaosNumber++];			//increment through chaosthreads once
+				}
+				else {
+					lastChaosThread=chaosThreads[(int)(Math.random()*(chaosThreads.length-1.3)+0.6)]; //rndm mix with few 0->nothing and few cases->close (double range[0.6;length-0.7])
+				}
+				chaosCheck.setSelected(false);
+				chaosCheck.setText(ShuffleString(chaosCheck.getText()));
+				lastChaosThread.start();
 			}
 		});
 		
@@ -184,7 +183,6 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		setVisible(true);
 		darkModeSwitch();
 	}
-
 	public void darkModeSwitch() {
 		if(isDark) {
 			drawMode(Color.GREEN,Color.BLACK);
@@ -200,8 +198,10 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 	public void drawBack(Color back) {
 		Component[] comps=getContentPane().getComponents();
 		for(Component comp:comps)
-			if(comp instanceof AbstractButton)
+			if(comp instanceof AbstractButton) {
 				drawMode(comp.getForeground(),back);
+				return;
+			}
 	}
 	
 	public void drawFore(Color fore) {
@@ -219,12 +219,12 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 			comp.setBackground(b);
 			comp.setForeground(f);
 			if(comp instanceof JTextField) {
-				if(b.getRed()+b.getBlue()+b.getGreen()>80*3)					//if not very dark
+				if(b.getRed()+b.getBlue()+b.getGreen()>80*3)					//if background not very dark
 					comp.setBackground(Color.WHITE);
 				else
 					comp.setBackground(new Color(150,150,150));
 			}
-			if(comp instanceof JPanel) {
+			if(comp instanceof JPanel) {										//recursive go one deeper
 				drawMode(f,b,((JPanel)comp).getComponents());
 			}
 		}
@@ -244,7 +244,7 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		cont.validate();
 	}
 	
-	public String cutIntDecimals(double x) {
+	public String cutIntDecimals(double x) {		//cut .0 off
 		if((int)x==x)
 			return (int)(x)+"";
 		return x+"";
@@ -262,7 +262,18 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 	public void close() {
 		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
-	
+	private static String ShuffleString(String s) {
+		Character[] chaosCharacters= new Character[s.length()];
+		for (int i = 0; i < chaosCharacters.length; i++) {
+			chaosCharacters[i]=(Character)s.charAt(i);
+		}
+		shuffleArray(chaosCharacters);
+		StringBuilder chaosSb=new StringBuilder();
+		for (Character character : chaosCharacters) {
+			chaosSb.append(character);
+		}
+		return chaosSb.toString();
+	}
 	private static <T> void shuffleArray(T[] array){		//basic Fisher–Yates shuffle
 	    int index;
 		T temp;
@@ -282,13 +293,13 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		try { x=Double.parseDouble(xField.getText()); }
 		catch (NumberFormatException except){
 	    	resultField.setText("ERROR:"+except.getMessage()+" for X");
-	    	except.printStackTrace();
+//	    	except.printStackTrace();
 	    	return;
 	    }
 		if(!"sincoslog2".contains(source.getText()))try { y=Double.parseDouble(yField.getText()); }
 		catch (NumberFormatException except){
 	    	resultField.setText("ERROR:"+except.getMessage()+" for Y");
-	    	except.printStackTrace();
+//	    	except.printStackTrace();
 	    	return;
 	    }
 		switch(source.getText()){
