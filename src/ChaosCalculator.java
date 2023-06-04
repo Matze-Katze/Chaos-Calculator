@@ -11,8 +11,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.util.Iterator;
 import java.util.Random;
 
 import javax.swing.AbstractButton;
@@ -74,6 +72,23 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		radianButton.setSelected(isRadian);
 		darkModeCheck.setSelected(isDark);
 		darkModeCheck.addItemListener((ItemEvent e)->darkModeSwitch());  
+		Thread[] chaosThreads= {
+				new Thread( ()->{} ),
+				new Thread( ()->{ drawFore(new Color(0, 0, 0, 0)); } ), 	//transparent foreground
+				new Thread( ()->{ drawBack(new Color(0, 0, 0, 0)); } ), 				
+				new Thread( ()->{ drawFore(rndmColor()); } ),				//rndm foreground
+				new Thread( ()->{ drawBack(rndmColor()); } ),
+				new Thread( ()->{ rndmizeComponentOrder(buttonsPanel); }),
+				new Thread( ()->{ rndmizeComponentOrder(inputPanel); }),
+				new Thread( ()->{ rndmizeComponentOrder(getContentPane()); }),
+				new Thread( ()->{ fakeClose(new Random().nextInt(4000)); }),
+				new Thread( ()->{ 
+					if(new Random().nextBoolean())
+						close();
+					else
+						fakeClose(10000);
+				}),
+			};
 		chaosCheck.addMouseListener(new MouseAdapter() {   								//chaos fun stuff
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -84,28 +99,12 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 					Thread.sleep(new Random().nextInt(chaosNumber*250+1)); 				//rndm sleep with increasing range starting 0.25 sek
 				} catch (InterruptedException e1) {
 				}
-				Thread[] chaosThreads= {
-							new Thread( ()->{} ),
-							new Thread( ()->{ drawFore(new Color(0, 0, 0, 0)); } ), 	//transparent foreground
-							new Thread( ()->{ drawBack(new Color(0, 0, 0, 0)); } ), 				
-							new Thread( ()->{ drawFore(rndmColor()); } ),				//rndm foreground
-							new Thread( ()->{ drawBack(rndmColor()); } ),
-							new Thread( ()->{ rndmizeComponentOrder(buttonsPanel); }),
-							new Thread( ()->{ rndmizeComponentOrder(inputPanel); }),
-							new Thread( ()->{ rndmizeComponentOrder(getContentPane()); }),
-							new Thread( ()->{ fakeClose(new Random().nextInt(4000)); }),
-							new Thread( ()->{ 
-								if(new Random().nextBoolean())
-									close();
-								else
-									fakeClose(10000);
-							}),
-						};
-				if(chaosNumber!=chaosThreads.length-1) {
-					lastChaosThread=chaosThreads[chaosNumber++];			//increment through chaosthreads once
+				int threadCount=chaosThreads.length-1;
+				if(chaosNumber!=threadCount) {
+					lastChaosThread=new Thread(chaosThreads[chaosNumber++]);			//increment through chaosthreads once
 				}
 				else {
-					lastChaosThread=chaosThreads[(int)(Math.random()*(chaosThreads.length-1.3)+0.6)]; //rndm mix with few 0->nothing and few cases->close (double range[0.6;length-0.7])
+					lastChaosThread=new Thread(chaosThreads[(int)(Math.random()*(threadCount+.3)+.6)]); //rndm mix with few 0->nothing and few cases->close (double range[0.6;length+0.3])
 				}
 				chaosCheck.setSelected(false);
 				chaosCheck.setText(ShuffleString(chaosCheck.getText()));
