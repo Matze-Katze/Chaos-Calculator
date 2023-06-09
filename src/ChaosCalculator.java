@@ -31,7 +31,7 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 	public static void main(String[] args){
 		 new ChaosCalculator();
 	}
-	
+
 	private boolean isDark=true,isRadian=true;
 	private int chaosNumber=0;
 	private Thread lastChaosThread;
@@ -54,12 +54,11 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 	private ButtonGroup angleGroup=new ButtonGroup();
 	private JRadioButton radianButton = new JRadioButton("radian");
 	private JRadioButton degreeButton = new JRadioButton("degree");
-	
+
 	private JButton[] buttonArray;
-	
 	private JButton clearButton;
-	
 	public ChaosCalculator(){
+		
 		URL iconURL = getClass().getResource("/icon.jpg");
 		ImageIcon icon = new ImageIcon(iconURL);
 		setIconImage(icon.getImage());
@@ -67,6 +66,7 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		this.setTitle("Calculator");		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+		//settingspanel
 		angleGroup.add(degreeButton);
 		angleGroup.add(radianButton);
 		radianButton.setSelected(isRadian);
@@ -87,7 +87,7 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 						close();
 					else
 						fakeClose(10000);
-				}),
+				})
 			};
 		chaosCheck.addMouseListener(new MouseAdapter() {   								//chaos fun stuff
 			@Override
@@ -97,8 +97,7 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 						return;	
 				try {
 					Thread.sleep(new Random().nextInt(chaosNumber*250+1)); 				//rndm sleep with increasing range starting 0.25 sek
-				} catch (InterruptedException e1) {
-				}
+				} catch (InterruptedException e1) {}
 				int threadCount=chaosThreads.length-1;
 				if(chaosNumber!=threadCount) {
 					lastChaosThread=new Thread(chaosThreads[chaosNumber++]);			//increment through chaosthreads once
@@ -111,24 +110,6 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 				lastChaosThread.start();
 			}
 		});
-		
-		xField.setToolTipText("I'm operand X: a real number");
-		yField.setToolTipText("I'm operand Y: a real number");
-		resultField.setToolTipText("I'm the Result: the realest number of them all");
-		resultField.setEditable(false);
-		inputPanel.setPreferredSize(new Dimension(380,120));
-		inputPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-		inputPanel.setLayout(new GridLayout(3, 2,0,10));;
-		inputPanelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 10));
-			
-		inputPanel.add(xLabel);
-		inputPanel.add(xField);
-		inputPanel.add(yLabel);
-		inputPanel.add(yField);
-		inputPanel.add(resultLabel);	
-		inputPanel.add(resultField);
-		inputPanelPanel.add(inputPanel);
-
 		radianButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -142,11 +123,30 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 			}
 		});
 		
+		//inputpanel
+		xField.setToolTipText("I'm operand X: a real number");
+		yField.setToolTipText("I'm operand Y: a real number");
+		resultField.setToolTipText("I'm the Result: the realest number of them all");
+		resultField.setEditable(false);
+		inputPanel.setPreferredSize(new Dimension(380,120));
+		inputPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+		inputPanel.setLayout(new GridLayout(3, 2,0,10));;
+			
+		inputPanel.add(xLabel);
+		inputPanel.add(xField);
+		inputPanel.add(yLabel);
+		inputPanel.add(yField);
+		inputPanel.add(resultLabel);	
+		inputPanel.add(resultField);
+		inputPanelPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 10));
+		inputPanelPanel.add(inputPanel);
+
 		settingsPanel.add(degreeButton);
 		settingsPanel.add(radianButton);
 		settingsPanel.add(darkModeCheck);
 		settingsPanel.add(chaosCheck);
 		
+		//buttonsPanel
 		buttonArray =new JButton[8];
 		buttonsPanel.setPreferredSize(new Dimension(380,80));
 		buttonsPanel.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -173,117 +173,14 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 			yField.setText("");
 			});
 		
-		getContentPane().add(inputPanelPanel);
-		getContentPane().add(settingsPanel);
-		getContentPane().add(buttonsPanelPanel);
-		getContentPane().add(clearButton);
-		getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+		add(inputPanelPanel);
+		add(settingsPanel);
+		add(buttonsPanelPanel);
+		add(clearButton);
+		setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
 		pack();
-		setVisible(true);
 		darkModeSwitch();
-	}
-	public void darkModeSwitch() {
-		if(isDark) {
-			drawMode(Color.GREEN,Color.BLACK);
-		}else {
-			drawMode(Color.BLACK,new Color(240, 240, 240));
-			xField.setBackground(Color.WHITE);
-			yField.setBackground(Color.WHITE);
-			resultField.setBackground(Color.WHITE);
-		}
-		isDark=!isDark;
-	}
-	
-	public void drawBack(Color back) {
-		Component[] comps=getContentPane().getComponents();
-		for(Component comp:comps)
-			if(comp instanceof AbstractButton) {
-				drawMode(comp.getForeground(),back);
-				return;
-			}
-	}
-	
-	public void drawFore(Color fore) {
-		drawMode(fore,getContentPane().getBackground());
-	}
-	public void drawMode(Color fore,Color back) {
-		getContentPane().setBackground(back);
-		inputPanel.setBorder(BorderFactory.createLineBorder(fore));
-		buttonsPanel.setBorder(BorderFactory.createLineBorder(fore));
-		drawMode(fore,back,getContentPane().getComponents());
-	}
-	
-	public static void drawMode(Color f,Color b,Component[] comps) {
-		for(Component comp:comps) {
-			comp.setBackground(b);
-			comp.setForeground(f);
-			if(comp instanceof JTextField) {
-				if(b.getRed()+b.getBlue()+b.getGreen()>80*3)					//if background not very dark
-					comp.setBackground(Color.WHITE);
-				else
-					comp.setBackground(new Color(150,150,150));
-			}
-			if(comp instanceof JPanel) {										//recursive go one deeper
-				drawMode(f,b,((JPanel)comp).getComponents());
-			}
-		}
-	}
-	
-	public Color rndmColor() {
-		return new Color(new Random().nextInt(0xffffff));
-	}
-	public void rndmizeComponentOrder(Container cont) {
-		Component[] compArray=cont.getComponents();
-		for(Component comp:compArray)
-			cont.remove(comp);
-		shuffleArray(compArray);
-		for(Component comp:compArray) {
-			cont.add(comp);
-		}
-		cont.validate();
-	}
-	
-	public String cutIntDecimals(double x) {		//cut .0 off
-		if((int)x==x)
-			return (int)(x)+"";
-		return x+"";
-	}
-	
-	public void fakeClose(int a) {
-		setVisible(false);
-		try {
-			Thread.sleep(a);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
 		setVisible(true);
-	}
-	public void close() {
-		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-	}
-	private static String ShuffleString(String s) {
-		Character[] chaosCharacters= new Character[s.length()];
-		for (int i = 0; i < chaosCharacters.length; i++) {
-			chaosCharacters[i]=(Character)s.charAt(i);
-		}
-		shuffleArray(chaosCharacters);
-		StringBuilder chaosSb=new StringBuilder();
-		for (Character character : chaosCharacters) {
-			chaosSb.append(character);
-		}
-		return chaosSb.toString();
-	}
-	private static <T> void shuffleArray(T[] array){		//basic Fisher–Yates shuffle
-	    int index;
-		T temp;
-	    Random random = new Random();
-	    for (int i = array.length - 1; i > 0; i--)
-	    {
-	        index = random.nextInt(i + 1);
-	        temp = array[index];
-	        array[index] = array[i];
-	        array[i] = temp;
-	    }
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -331,5 +228,114 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 				resultField.setText(cutIntDecimals(Math.log(x) / Math.log(2)));
 				break;
 		}
+	}
+	
+	public void darkModeSwitch() {
+		if(isDark) {
+			drawMode(Color.GREEN,Color.BLACK);
+		}else {
+			drawMode(Color.BLACK,new Color(240, 240, 240));
+			xField.setBackground(Color.WHITE);
+			yField.setBackground(Color.WHITE);
+			resultField.setBackground(Color.WHITE);
+		}
+		isDark=!isDark;
+	}
+	
+	public void drawBack(Color back) {
+		Component[] comps=getContentPane().getComponents();
+		for(Component comp:comps)
+			if(comp instanceof AbstractButton) {
+				drawMode(comp.getForeground(),back);
+				return;
+			}
+	}
+	
+	public void drawFore(Color fore) {
+		drawMode(fore,getContentPane().getBackground());
+	}
+	
+	public void drawMode(Color fore,Color back) {
+		getContentPane().setBackground(back);
+		inputPanel.setBorder(BorderFactory.createLineBorder(fore));
+		buttonsPanel.setBorder(BorderFactory.createLineBorder(fore));
+		drawMode(fore,back,getContentPane().getComponents());
+	}
+	
+	public static void drawMode(Color f,Color b,Component[] comps) {
+		for(Component comp:comps) {
+			comp.setBackground(b);
+			comp.setForeground(f);
+			if(comp instanceof JTextField) {
+				if(b.getRed()+b.getBlue()+b.getGreen()>80*3)					//if background not very dark
+					comp.setBackground(Color.WHITE);
+				else
+					comp.setBackground(new Color(150,150,150));
+			}
+			if(comp instanceof JPanel) {										//recursive go one deeper
+				drawMode(f,b,((JPanel)comp).getComponents());
+			}
+		}
+	}
+	
+	public Color rndmColor() {
+		return new Color(new Random().nextInt(0xffffff));
+	}
+	
+	public void rndmizeComponentOrder(Container cont) {
+		Component[] compArray=cont.getComponents();
+		for(Component comp:compArray)
+			cont.remove(comp);
+		shuffleArray(compArray);
+		for(Component comp:compArray) {
+			cont.add(comp);
+		}
+		cont.validate();
+	}
+	
+	public String cutIntDecimals(double x) {		//cut .0 off
+		if((int)x==x)
+			return (int)(x)+"";
+		return x+"";
+	}
+	
+	public void fakeClose(int seconds) {
+		setVisible(false);
+		try {
+			Thread.sleep(seconds);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		setVisible(true);
+	}
+	
+	public void close() {
+		dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+	}
+	
+	private static String ShuffleString(String string) {
+		Character[] chaosCharacters= new Character[string.length()];
+		for (int i = 0; i < chaosCharacters.length; i++) {
+			chaosCharacters[i]=(Character)string.charAt(i);
+		}
+		shuffleArray(chaosCharacters);
+		StringBuilder chaosSb=new StringBuilder();
+		for (Character character : chaosCharacters) {
+			chaosSb.append(character);
+		}
+		return chaosSb.toString();
+	}
+	
+	private static <T> void shuffleArray(T[] array){		//basic Fisher–Yates shuffle
+	    int index;
+		T temp;
+	    Random random = new Random();
+	    for (int i = array.length - 1; i > 0; i--)
+	    {
+	        index = random.nextInt(i + 1);
+	        temp = array[index];
+	        array[index] = array[i];
+	        array[i] = temp;
+	    }
 	}
 }
