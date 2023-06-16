@@ -129,7 +129,6 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		resultField.setToolTipText("I'm the Result: the realest number of them all");
 		resultField.setEditable(false);
 		inputPanel.setPreferredSize(new Dimension(380,120));
-		inputPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 		inputPanel.setLayout(new GridLayout(3, 2,0,10));;
 			
 		inputPanel.add(xLabel);
@@ -149,7 +148,6 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		//buttonsPanel
 		buttonArray =new JButton[8];
 		buttonsPanel.setPreferredSize(new Dimension(380,80));
-		buttonsPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 		buttonsPanel.setLayout(new GridLayout(2, 4,10,10));
 		buttonArray[0]=new JButton("+");
 		buttonArray[1]=new JButton("*");
@@ -167,7 +165,7 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		buttonsPanelPanel.add(buttonsPanel);
 		
 		clearButton=new JButton("CLEAR");
-		clearButton.addActionListener((ActionEvent e)->{
+		clearButton.addActionListener(e->{
 			resultField.setText("");
 			xField.setText("");
 			yField.setText("");
@@ -189,13 +187,11 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		try { x=Double.parseDouble(xField.getText()); }
 		catch (NumberFormatException except){
 	    	resultField.setText("ERROR:"+except.getMessage()+" for X");
-//	    	except.printStackTrace();
 	    	return;
 	    }
 		if(!"sincoslog2".contains(source.getText()))try { y=Double.parseDouble(yField.getText()); }
 		catch (NumberFormatException except){
 	    	resultField.setText("ERROR:"+except.getMessage()+" for Y");
-//	    	except.printStackTrace();
 	    	return;
 	    }
 		switch(source.getText()){
@@ -257,6 +253,8 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 	
 	public void drawMode(Color fore,Color back) {
 		getContentPane().setBackground(back);
+//		inputPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(fore),"Inputs"));
+//		buttonsPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(fore),"Buttons"));
 		inputPanel.setBorder(BorderFactory.createLineBorder(fore));
 		buttonsPanel.setBorder(BorderFactory.createLineBorder(fore));
 		drawMode(fore,back,getContentPane().getComponents());
@@ -272,9 +270,8 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 				else
 					comp.setBackground(new Color(150,150,150));
 			}
-			if(comp instanceof JPanel) {										//recursive go one deeper
+			if(comp instanceof JPanel)										//recursive go one deeper
 				drawMode(f,b,((JPanel)comp).getComponents());
-			}
 		}
 	}
 	
