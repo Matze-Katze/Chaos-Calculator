@@ -99,12 +99,10 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 					Thread.sleep(new Random().nextInt(chaosNumber*250+1)); 				//rndm sleep with increasing range starting 0.25 sek
 				} catch (InterruptedException e1) {}
 				int threadCount=chaosThreads.length-1;
-				if(chaosNumber!=threadCount) {
+				if(chaosNumber!=threadCount)
 					lastChaosThread=new Thread(chaosThreads[chaosNumber++]);			//increment through chaosthreads once
-				}
-				else {
+				else
 					lastChaosThread=new Thread(chaosThreads[(int)(Math.random()*(threadCount+.3)+.6)]); //rndm mix with few 0->nothing and few cases->close (double range[0.6;length+0.3])
-				}
 				chaosCheck.setSelected(false);
 				chaosCheck.setText(ShuffleString(chaosCheck.getText()));
 				lastChaosThread.start();
@@ -323,9 +321,9 @@ public class ChaosCalculator extends JFrame implements ActionListener{
 		return chaosSb.toString();
 	}
 	
-	private static <T> void shuffleArray(T[] array){		//basic Fisher–Yates shuffle
+	private static <R> void shuffleArray(R[] array){		//basic Fisher–Yates shuffle
 	    int index;
-		T temp;
+		R temp;
 	    Random random = new Random();
 	    for (int i = array.length - 1; i > 0; i--)
 	    {
